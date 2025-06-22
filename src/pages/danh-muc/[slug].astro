@@ -1,0 +1,113 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PostCard from "../../components/PostCard.astro";
+import PostSidebar from "../../components/PostSidebar.astro";
+import { fetchPostCategories, fetchPosts } from "../../lib/api/posts";
+import "../../css/danhmuc.css";
+
+const { slug } = Astro.params;
+
+// Type guard để đảm bảo slug tồn tại
+if (!slug) {
+  return Astro.redirect("/404");
+}
+
+// Lấy danh sách categories để tìm category hiện tại
+const categories = await fetchPostCategories();
+const currentCategory = categories.find((cat) => cat.slug === slug);
+
+if (!currentCategory) {
+  return Astro.redirect("/404");
+}
+
+// Lấy tất cả bài viết và filter theo category
+const allPosts = await fetchPosts();
+const posts = allPosts
+  .filter((post) => post.danhmuc && post.danhmuc.slug === slug)
+  .sort((a, b) => a.thu_tu_hien_thi - b.thu_tu_hien_thi);
+---
+
+<Layout>
+  <div class="blog-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="breadcrumb">
+            <a href="/" class="breadcrumb-link">Trang chủ</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/bai-viet" class="breadcrumb-link">Bài viết</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current"
+              >{currentCategory.tendanhmucbaiviet}</span
+            >
+          </div>
+          <h1 class="page-title">{currentCategory.tendanhmucbaiviet}</h1>
+          <p class="page-description">
+            Khám phá các bài viết về {
+              currentCategory.tendanhmucbaiviet.toLowerCase()
+            }
+          </p>
+          <div class="category-stats">
+            <span class="posts-count">
+              <i class="fa-solid fa-newspaper"></i>
+              {posts.length} bài viết
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div class="content-grid">
+          <div class="content-main">
+            <!-- Category Posts List -->
+            <div class="category-posts">
+              {
+                posts.length > 0 ? (
+                  <>
+                    <div class="posts-header">
+                      <h2 class="posts-title">
+                        <i class="fa-solid fa-folder" />
+                        Bài viết trong danh mục "
+                        {currentCategory.tendanhmucbaiviet}"
+                      </h2>
+                      <p class="posts-count-text">
+                        Tìm thấy {posts.length} bài viết
+                      </p>
+                    </div>
+
+                    <div class="posts-grid">
+                      {posts.map((post) => (
+                        <PostCard post={post} />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div class="no-posts">
+                    <i class="fa-solid fa-folder-open" />
+                    <h3>Chưa có bài viết nào trong danh mục này</h3>
+                    <p>
+                      Danh mục "{currentCategory.tendanhmucbaiviet}" hiện chưa
+                      có bài viết nào. Hãy quay lại sau để xem những bài viết
+                      mới nhất!
+                    </p>
+                    <a href="/bai-viet" class="back-link">
+                      <i class="fa-solid fa-arrow-left" />
+                      Xem tất cả bài viết
+                    </a>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+          <div class="content-sidebar">
+            <PostSidebar />
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</Layout>

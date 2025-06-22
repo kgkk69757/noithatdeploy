@@ -1,0 +1,162 @@
+---
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  posts: any[];
+  categoryName: string;
+}
+
+const { posts, categoryName } = Astro.props;
+---
+
+<div class="category-posts">
+  {
+    posts.length > 0 ? (
+      <>
+        <div class="posts-header">
+          <h2 class="posts-title">
+            <i class="fa-solid fa-folder" />
+            Bài viết trong danh mục "{categoryName}"
+          </h2>
+          <p class="posts-count">Tìm thấy {posts.length} bài viết</p>
+        </div>
+
+        <div class="posts-grid">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      </>
+    ) : (
+      <div class="no-posts">
+        <i class="fa-solid fa-folder-open" />
+        <h3>Chưa có bài viết nào trong danh mục này</h3>
+        <p>
+          Danh mục "{categoryName}" hiện chưa có bài viết nào. Hãy quay lại sau
+          để xem những bài viết mới nhất!
+        </p>
+        <a href="/bai-viet" class="back-link">
+          <i class="fa-solid fa-arrow-left" />
+          Xem tất cả bài viết
+        </a>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .category-posts {
+    width: 100%;
+  }
+
+  .posts-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .posts-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+  }
+
+  .posts-title i {
+    color: #3b82f6;
+  }
+
+  .posts-count {
+    color: #6b7280;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 80px 20px;
+    color: #6b7280;
+  }
+
+  .no-posts i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #d1d5db;
+  }
+
+  .no-posts h3 {
+    font-size: 24px;
+    margin: 0 0 12px 0;
+    color: #374151;
+  }
+
+  .no-posts p {
+    font-size: 16px;
+    margin: 0 0 30px 0;
+    line-height: 1.6;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #3b82f6;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .back-link:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .posts-header {
+      margin-bottom: 20px;
+    }
+
+    .posts-title {
+      font-size: 20px;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .no-posts {
+      padding: 60px 20px;
+    }
+
+    .no-posts i {
+      font-size: 48px;
+    }
+
+    .no-posts h3 {
+      font-size: 20px;
+    }
+
+    .no-posts p {
+      font-size: 14px;
+    }
+  }
+</style>

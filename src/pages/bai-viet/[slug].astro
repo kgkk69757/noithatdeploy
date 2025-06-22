@@ -1,0 +1,229 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PostSidebar from "../../components/PostSidebar.astro";
+import { fetchPost, fetchPosts } from "../../lib/api/posts";
+// Import CSS
+import "../../css/post-detail.css";
+
+const { slug } = Astro.params;
+
+// Type guard để đảm bảo slug tồn tại
+if (!slug) {
+  return Astro.redirect("/404");
+}
+
+const post = await fetchPost(slug);
+const relatedPosts = await fetchPosts(3);
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+// Chuẩn bị props cho Layout
+const layoutProps = {
+  title: post.meta_title,
+  description: post.meta_description,
+  keywords: post.keyword,
+  canonical: post.canonical_url,
+  ogTitle: post.meta_title,
+  ogDescription: post.meta_description,
+  ogImage: post.og_image_url || post.img_url,
+  imageAlt: post.img_alt,
+  publishedTime: post.created_at_full,
+  robots: "index, follow"
+};
+---
+
+<Layout {...layoutProps}>
+  <div class="post-detail-page">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
+      <div class="container">
+        <nav class="breadcrumb">
+          <a href="/" class="breadcrumb-link">Trang chủ</a>
+          <span class="breadcrumb-separator">/</span>
+          <a href="/bai-viet" class="breadcrumb-link">Bài viết</a>
+          <span class="breadcrumb-separator">/</span>
+          <a href={`/danh-muc/${post.danhmuc.slug}`} class="breadcrumb-link">
+            {post.danhmuc.tendanhmucbaiviet}
+          </a>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">{post.tieudebaiviet}</span>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div class="content-grid">
+          <!-- Article Content -->
+          <article class="post-content">
+            <!-- Post Header -->
+            <header class="post-header">
+              <div class="post-meta">
+                <span class="category">{post.danhmuc.tendanhmucbaiviet}</span>
+                <time class="publish-date" datetime={post.created_at_full}>
+                  {post.created_at_full}
+                </time>
+              </div>
+
+              <h1 class="post-title">{post.tieudebaiviet}</h1>
+
+              <div class="post-info">
+                <div class="author-info">
+                  <i class="fa-solid fa-user"></i>
+                  <span>Tác giả: Admin</span>
+                </div>
+                <div class="post-stats">
+                  <span class="views">
+                    <i class="fa-solid fa-calendar"></i>
+                    {post.created_at}
+                  </span>
+                </div>
+              </div>
+            </header>
+
+            <!-- Featured Image với lazy loading -->
+            <div class="featured-image">
+              <img 
+                src={post.img_url} 
+                alt={post.img_alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <!-- Post Excerpt -->
+            {post.meta_description && (
+              <div class="post-excerpt">
+                <p>{post.meta_description}</p>
+              </div>
+            )}
+
+            <!-- Lazy Content Container -->
+            <div id="lazy-content">
+              <!-- Post Content -->
+              <div class="post-body">
+                {post.noidung && <div set:html={post.noidung} />}
+              </div>
+
+              <!-- Gallery Images với lazy loading -->
+              {
+                post.anhbaiviets && post.anhbaiviets.length > 0 && (
+                  <div class="post-gallery lazy-section">
+                    <h3>Hình ảnh liên quan</h3>
+                    <div class="gallery-grid">
+                      {post.anhbaiviets.map((image, index) => (
+                        <div class="gallery-item">
+                          <img
+                            data-src={image.url}
+                            alt={image.alt || `Hình ảnh ${index + 1}`}
+                            loading="lazy"
+                            decoding="async"
+                            class="lazy-image"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+
+              <!-- Tags -->
+              {
+                post.thes && post.thes.length > 0 && (
+                  <div class="post-tags">
+                    <h4>Thẻ:</h4>
+                    <div class="tags-list">
+                      {post.thes.map((tag) => (
+                        <span class="tag">{tag.tenthe}</span>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+
+              <!-- Social Share -->
+            <div class="social-share">
+              <h4>Chia sẻ bài viết:</h4>
+              <div class="share-buttons">
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${Astro.url}`}
+                  target="_blank"
+                  class="share-btn facebook"
+                >
+                  <i class="fab fa-facebook-f"></i>
+                  Facebook
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${Astro.url}&text=${post.tieudebaiviet}`}
+                  target="_blank"
+                  class="share-btn twitter"
+                >
+                  <i class="fab fa-twitter"></i>
+                  Twitter
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${Astro.url}`}
+                  target="_blank"
+                  class="share-btn linkedin"
+                >
+                  <i class="fab fa-linkedin-in"></i>
+                  LinkedIn
+                </a>
+                <button class="share-btn copy-link">
+                  <i class="fa-solid fa-link"></i>
+                  Copy Link
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Sidebar -->
+          <aside class="sidebar-content">
+            <PostSidebar />
+          </aside>
+        </div>
+
+        <!-- Related Posts với lazy loading -->
+        {
+          relatedPosts.length > 0 && (
+            <section class="related-posts lazy-section">
+              <h2 class="section-title">Bài viết liên quan</h2>
+              <div class="related-posts-grid">
+                {relatedPosts.map((relatedPost) => (
+                  <article class="related-post-card">
+                    <div class="related-post-image">
+                      <img
+                        data-src={relatedPost.img_url}
+                        alt={relatedPost.img_alt || relatedPost.tieudebaiviet}
+                        loading="lazy"
+                        decoding="async"
+                        class="lazy-image"
+                      />
+                    </div>
+                    <div class="related-post-content">
+                      <h3 class="related-post-title">
+                        <a href={`/bai-viet/${relatedPost.slug}`}>
+                          {relatedPost.tieudebaiviet}
+                        </a>
+                      </h3>
+                      <div class="related-post-meta">
+                        <time>{relatedPost.created_at}</time>
+                        <span class="category">
+                          {relatedPost.danhmuc.tendanhmucbaiviet}
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </div>
+    </main>
+  </div>
+  <script src="/js/post-detail.js" defer></script>
+</Layout>

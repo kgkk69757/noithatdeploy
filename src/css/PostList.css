@@ -1,0 +1,141 @@
+
+/* Tối ưu: Sử dụng contain để cải thiện rendering performance */
+.posts-list {
+  width: 100%;
+  contain: layout style;
+}
+
+/* Tối ưu: Sử dụng subgrid và cải thiện grid performance */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  /* Tối ưu: Cải thiện rendering performance */
+  contain: layout;
+  will-change: auto;
+}
+
+/* Tối ưu: Lazy loading animation cho better UX */
+.posts-grid > * {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tối ưu: Cải thiện no-posts state */
+.no-posts {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  /* Tối ưu: Prevent layout shift */
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  contain: layout style;
+}
+
+.no-posts i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: #d1d5db;
+  /* Tối ưu: Font display optimization */
+  font-display: swap;
+}
+
+.no-posts h3 {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+  color: #374151;
+  /* Tối ưu: Typography optimization */
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.no-posts p {
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+/* Tối ưu: Responsive design với container queries */
+@container (max-width: 768px) {
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Fallback cho browsers không support container queries */
+@media (max-width: 768px) {
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .no-posts {
+    padding: 40px 20px;
+    min-height: 250px;
+  }
+  
+  .no-posts i {
+    font-size: 36px;
+  }
+  
+  .no-posts h3 {
+    font-size: 20px;
+  }
+  
+  .no-posts p {
+    font-size: 14px;
+  }
+}
+
+/* Tối ưu: Prefers-reduced-motion support */
+@media (prefers-reduced-motion: reduce) {
+  .posts-grid > * {
+    animation: none;
+  }
+}
+
+/* Tối ưu: Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .no-posts {
+    color: #9ca3af;
+  }
+  
+  .no-posts h3 {
+    color: #f3f4f6;
+  }
+  
+  .no-posts i {
+    color: #4b5563;
+  }
+}
+
+/* Tối ưu: Print styles */
+@media print {
+  .posts-grid {
+    display: block;
+  }
+  
+  .posts-grid > * {
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  
+  .no-posts {
+    display: none;
+  }
+}

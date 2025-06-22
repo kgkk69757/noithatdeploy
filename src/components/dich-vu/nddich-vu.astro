@@ -1,0 +1,70 @@
+---
+import "../../css/nddich-vu.css";
+import { fetchTrangDichVu, type TrangDichVu } from "../../lib/api/dich-vu";
+import { fetchPosts, type Post } from "../../lib/api/posts";
+
+// Gọi API lấy dữ liệu trang dịch vụ
+let trangDichVu: TrangDichVu | null;
+let allPosts: Post[] = [];
+try {
+  trangDichVu = await fetchTrangDichVu();
+  allPosts = await fetchPosts();
+  // Nếu id baiviet trùng với id của Post, lấy img_url của Post thay cho img
+  if (trangDichVu?.baiviet?.id) {
+    const matchedPost = allPosts.find((p) => p.id === trangDichVu!.baiviet.id);
+    if (matchedPost && matchedPost.img_url) {
+      trangDichVu.baiviet.img = matchedPost.img_url;
+    }
+  }
+} catch (error) {
+  console.error("Lỗi khi lấy dữ liệu trang dịch vụ:", error);
+  trangDichVu = null;
+}
+---
+
+<section class="dich-vu-section">
+  <div class="container">
+    {
+      trangDichVu && (
+        <article class="dich-vu-content">
+          <header class="article-header">
+            <h1 class="article-title">{trangDichVu.tieude}</h1>
+            <div class="article-meta">
+              {/* Không có danhmuc trong cấu trúc mới, nên tạm thời bỏ */}
+              <time class="publish-date">
+                {new Date(trangDichVu.baiviet.created_at).toLocaleDateString(
+                  "vi-VN"
+                )}
+              </time>
+            </div>
+            {/* Không có thes trong cấu trúc mới, nên tạm thời bỏ */}
+          </header>
+
+          <div class="article-image">
+            <img
+              src={trangDichVu.baiviet.img}
+              alt={trangDichVu.baiviet.img_alt || trangDichVu.tieude}
+              loading="lazy"
+            />
+          </div>
+
+          <div class="article-body">
+            <div class="content" set:html={trangDichVu.baiviet.noidung} />
+          </div>
+
+          {/* Không có anhbaiviets trong cấu trúc mới, nên tạm thời bỏ */}
+        </article>
+      )
+    }
+
+    {
+      !trangDichVu && (
+        <div class="no-content">
+          <i class="fa-solid fa-exclamation-triangle" />
+          <h3>Không thể tải nội dung</h3>
+          <p>Vui lòng thử lại sau hoặc liên hệ với chúng tôi để được hỗ trợ.</p>
+        </div>
+      )
+    }
+  </div>
+</section>

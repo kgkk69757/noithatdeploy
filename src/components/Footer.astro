@@ -1,0 +1,127 @@
+---
+import "../css/Footer.css";
+
+// Import APIs
+import { fetchFooterInfo, type FooterInfo } from "../lib/api/footer";
+import { fetchPhones, type Phone } from "../lib/api/phone";
+import { fetchPolicies, type PolicyCategory } from "../lib/api/policy";
+
+const footerInfo: FooterInfo | null = await fetchFooterInfo();
+const phones: Phone[] = await fetchPhones();
+const policyCategories: PolicyCategory[] = await fetchPolicies();
+
+const primaryPhone = phones.length > 0 ? phones[0] : null;
+---
+
+<!-- Footer Section -->
+<footer class="footer-section">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <!-- Company Info -->
+      {
+        footerInfo?.footer_title && (
+          <div class="footer-column">
+            <h3 class="footer-title">{footerInfo.footer_title}</h3>
+            <div class="footer-content">
+              {footerInfo.text && <p>{footerInfo.text}</p>}
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Policy Categories -->
+      {
+        policyCategories.map((category) => (
+          <div class="footer-column">
+            <h3 class="footer-title">{category.ten_danh_muc.toUpperCase()}</h3>
+            <div class="footer-content">
+              {category.links.map((link) => (
+                <p>
+                  <a href={link.detail.url} class="footer-link">
+                    {link.title}
+                  </a>
+                </p>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+
+      <!-- Registration Form -->
+      <div class="footer-column">
+        <h3 class="footer-title">ĐĂNG KÝ TƯ VẤN</h3>
+        <form class="registration-form">
+          <input
+            type="text"
+            placeholder="HỌ VÀ TÊN *"
+            class="form-input"
+            required
+          />
+          <input
+            type="tel"
+            placeholder="SỐ ĐIỆN THOẠI *"
+            class="form-input"
+            required
+          />
+          <button type="submit" class="form-button">
+            <i class="fas fa-paper-plane"></i>
+            ĐĂNG KÝ
+          </button>
+        </form>
+        <div class="qr-section">
+          <p class="qr-title">LIÊN HỆ QUA ZALO</p>
+          <div class="qr-code">
+            {
+              footerInfo?.logo && (
+                <img src={footerInfo.logo} alt={footerInfo.logo_alt} />
+              )
+            }
+            <p>Quét mã QR</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact & QR -->
+      <div class="footer-column">
+        <h3 class="footer-title">THÔNG TIN LIÊN HỆ</h3>
+        <div class="footer-content">
+          {
+            primaryPhone?.number && (
+              <p>
+                <i class="fas fa-phone" /> Hotline: {primaryPhone.number}
+              </p>
+            )
+          }
+          <p><i class="fas fa-envelope"></i> Email: info@bepnhaban.com</p>
+        </div>
+
+        <img src="/images/image-11.png" alt="Bản đồ vị trí công ty" />
+
+        <div class="working-hours">
+          <p class="hours-title">THỜI GIAN LÀM VIỆC</p>
+          <p>Thứ 2 - Thứ 7: 7h00 - 18h00</p>
+          <p>Chủ nhật: 8h00 - 17h00</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media & Copyright -->
+    <div class="footer-bottom">
+      <div class="social-links">
+        <a href="#" class="social-link">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-youtube"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-tiktok"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+      <p class="copyright">Bản quyền © 2025 Thiết kế bởi Evosea</p>
+    </div>
+  </div>
+</footer>

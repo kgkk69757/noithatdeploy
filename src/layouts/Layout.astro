@@ -1,22 +1,175 @@
+---
+import Header from "../components/Header.astro";
+import Khoinutlienhe from "../components/khoinutlienhe.astro";
+import Footer from "../components/Footer.astro";
+
+// site-settings
+import { fetchSiteSettings } from "../lib/api/getSiteSettings";
+const siteSettings = await fetchSiteSettings();
+const { site_name, logo, favicon } = siteSettings;
+
+// Props cho SEO
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  imageAlt?: string;
+  twitterCard?: string;
+  robots?: string;
+  schemaJson?: string;
+  keywords?: string;
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  ogType?: string;
+}
+
+const {
+  title = site_name,
+  description = "Default Description",
+  canonical,
+  ogTitle,
+  ogDescription,
+  ogImage,
+  imageAlt,
+  twitterCard = "summary_large_image",
+  robots = "index, follow",
+  schemaJson,
+  keywords,
+  author = "Admin",
+  publishedTime,
+  modifiedTime,
+  ogType = "business.business"
+} = Astro.props;
+
+// Generate current URL for canonical
+const currentUrl = canonical || Astro.url.href;
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href={favicon.file_url} />
+    <link rel="shortcut icon" href={favicon.file_url} type="image/x-icon" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Basic SEO -->
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {keywords && <meta name="keywords" content={keywords} />}
+    {author && <meta name="author" content={author} />}
+    <link rel="canonical" href={currentUrl} />
+    <meta name="robots" content={robots} />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content={ogTitle || title} />
+    <meta property="og:description" content={ogDescription || description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:site_name" content={site_name} />
+    <meta property="og:locale" content="vi_VN" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content={twitterCard} />
+    <meta name="twitter:title" content={ogTitle || title} />
+    {ogDescription && <meta name="twitter:description" content={ogDescription || description} />}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    
+    <!-- Schema.org JSON-LD -->
+    {schemaJson && <script type="application/ld+json" set:html={schemaJson} />}
+
+    <!-- Critical CSS - Load immediately -->
+    <style>
+      /* Critical CSS cho above-the-fold content */
+      html, body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+      .hero-banner { min-height: 100vh; }
+      /* Thêm critical styles khác */
+    </style>
+
+    <!-- Non-critical CSS - Load asynchronously -->
+    <link
+      rel="preload"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    </noscript>
+
+    <!-- Fonts - Load asynchronously -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+
+    <!-- Swiper CSS - Load asynchronously -->
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    </noscript>
+
+    <!-- JavaScript - Load with defer -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"
+      defer></script>
+    <script src="/js/header.js" defer></script>
+  </head>
+  <body>
+    <Header />
+    <Khoinutlienhe />
+    <slot />
+    <Footer />
+  </body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
+

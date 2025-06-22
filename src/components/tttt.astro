@@ -1,0 +1,116 @@
+---
+import "../css/tttt.css";
+import { fetchMediaContents, getVideoItems, getTikTokItems, sortMediaItems, createVideoItemHTML, createTikTokItemHTML } from "./tttt.ts";
+
+// Fetch media data at build time
+let mediaData = null;
+let videoItems: any[] = []; // Khai báo rõ ràng là any[]
+let tiktokItems: any[] = []; // Khai báo rõ ràng là any[]
+
+try {
+  const response = await fetchMediaContents();
+  if (response.success) {
+    mediaData = response.data;
+    videoItems = sortMediaItems(getVideoItems(mediaData));
+    tiktokItems = sortMediaItems(getTikTokItems(mediaData));
+  }
+} catch (error) {
+  console.error("Failed to fetch media data:", error);
+  // Fallback to empty arrays if API fails
+}
+---
+
+<section>
+  <div class="media-container">
+    <h1 class="media-slider-title">KÊNH TRUYỀN THÔNG TRỰC TUYẾN</h1>
+
+    <!-- Horizontal Video List -->
+    <div class="media-video-container">
+      <div class="media-video-list" id="videoSlider">
+        {videoItems.length > 0 ? (
+          videoItems.map((item) => (
+            <div class="video-item" data-id={item.id}>
+              {item.is_youtube ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${item.media_id}`}
+                  title={item.title}
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen>
+                </iframe>
+              ) : (
+                <Fragment set:html={item.embed_code} />
+              )}
+            </div>
+          ))
+        ) : (
+          <!-- Fallback content if no videos from API -->
+          <div class="video-item">
+            <iframe
+              src="https://www.youtube.com/embed/cKBbojc2NUM"
+              title="Video Truyền Thông Mặc Định"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- TikTok Section -->
+    <h1 class="media-slider-title media-tiktok-title"></h1>
+
+    <div class="media-tiktok-container">
+      <div class="media-tiktok-list" id="tiktokSlider">
+        {tiktokItems.length > 0 ? (
+          tiktokItems.map((item) => (
+            <div class="tiktok-item" data-id={item.id}>
+              <Fragment set:html={item.embed_code} />
+            </div>
+          ))
+        ) : (
+          <!-- Fallback content if no TikTok videos from API -->
+          <div class="tiktok-item">
+            <blockquote
+              class="tiktok-embed"
+              cite="https://www.tiktok.com/@deco.home86/video/7342838091574480129"
+              data-video-id="7342838091574480129"
+              style="max-width: 605px;min-width: 325px;"
+            >
+              <section>
+                <a
+                  target="_blank"
+                  title="@deco.home86"
+                  href="https://www.tiktok.com/@deco.home86?refer=embed"
+                  >@deco.home86</a
+                >
+                Nội thất mặc định
+              </section>
+            </blockquote>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Load TikTok embed script if we have TikTok content -->
+{tiktokItems.length > 0 && (
+  <script async src="https://www.tiktok.com/embed.js"></script>
+)}
+
+<script src="/js/tttt.js" defer></script>
+
+<script>
+  // Client-side initialization for dynamic content
+  import { initializeMediaSection } from './tttt.ts';
+
+  // Initialize media section on client-side for any dynamic updates
+  document.addEventListener('DOMContentLoaded', () => {
+    // You can call initializeMediaSection() here if you want to refresh content dynamically
+    // initializeMediaSection();
+
+    console.log('Media section initialized with server-side data');
+  });
+</script>

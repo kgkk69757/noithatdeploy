@@ -1,0 +1,125 @@
+---
+import { fetchPostCategories, fetchPosts } from "../lib/api/posts";
+import "../css/PostSidebar.css";
+
+// Cache API calls với timeout
+const [categories, recentPosts] = await Promise.all([
+  fetchPostCategories(),
+  fetchPosts(5)
+]);
+
+// Get current category from URL
+const currentPath = Astro.url.pathname;
+const currentCategorySlug = currentPath.includes("/danh-muc/")
+  ? currentPath.split("/danh-muc/")[1]
+  : null;
+---
+
+<div class="sidebar">
+  <!-- Search Box -->
+  <div class="sidebar-widget">
+    <h3 class="widget-title">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Tìm kiếm
+    </h3>
+    <form class="search-form" role="search">
+      <div class="search-input-container">
+        <input
+          type="search"
+          placeholder="Tìm kiếm bài viết..."
+          class="search-input"
+          autocomplete="off"
+          aria-label="Tìm kiếm bài viết"
+        />
+        <button type="submit" class="search-button" aria-label="Tìm kiếm">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Categories -->
+  {
+    categories.length > 0 && (
+      <div class="sidebar-widget">
+        <h3 class="widget-title">
+          <i class="fa-solid fa-folder" />
+          Danh mục
+        </h3>
+        <ul class="category-list" role="list">
+          {categories.map((category) => (
+            <li class="category-item" role="listitem">
+              <a
+                href={`/danh-muc/${category.slug}`}
+                class={`category-link ${currentCategorySlug === category.slug ? "active" : ""}`}
+                aria-current={currentCategorySlug === category.slug ? "page" : undefined}
+              >
+                <span class="category-name">{category.tendanhmucbaiviet}</span>
+                <span class="category-count">({category.baiviets_count})</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  <!-- Recent Posts -->
+  {
+    recentPosts.length > 0 && (
+      <div class="sidebar-widget">
+        <h3 class="widget-title">
+          <i class="fa-solid fa-clock" />
+          Bài viết mới nhất
+        </h3>
+        <div class="recent-posts">
+          {recentPosts.map((post, index) => (
+            <article class="recent-post-item">
+              <div class="recent-post-image">
+                <img
+                  src={post.img_url}
+                  alt={post.img_alt || post.tieudebaiviet}
+                  loading={index < 2 ? "eager" : "lazy"}
+                  decoding="async"
+                  width="60"
+                  height="60"
+                />
+              </div>
+              <div class="recent-post-content">
+                <h4 class="recent-post-title">
+                  <a href={`/bai-viet/${post.slug}`}>{post.tieudebaiviet}</a>
+                </h4>
+                <div class="recent-post-meta">
+                  <time class="recent-post-date" datetime={post.created_at}>
+                    {new Date(post.created_at).toLocaleDateString('vi-VN')}
+                  </time>
+                  <span class="recent-post-category">
+                    {post.danhmuc.tendanhmucbaiviet}
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <!-- Tags Cloud -->
+  <div class="sidebar-widget">
+    <h3 class="widget-title">
+      <i class="fa-solid fa-tags"></i>
+      Thẻ phổ biến
+    </h3>
+    <div class="tags-cloud" role="list">
+      <a href="/tag/noi-that" class="tag" role="listitem">Nội thất</a>
+      <a href="/tag/phong-khach" class="tag" role="listitem">Phòng khách</a>
+      <a href="/tag/phong-ngu" class="tag" role="listitem">Phòng ngủ</a>
+      <a href="/tag/bep" class="tag" role="listitem">Bếp</a>
+      <a href="/tag/thiet-ke" class="tag" role="listitem">Thiết kế</a>
+      <a href="/tag/trang-tri" class="tag" role="listitem">Trang trí</a>
+      <a href="/tag/mau-sac" class="tag" role="listitem">Màu sắc</a>
+      <a href="/tag/anh-sang" class="tag" role="listitem">Ánh sáng</a>
+    </div>
+  </div>
+</div>

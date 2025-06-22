@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Sitemap tại các URL sau:
+- `http://localhost:4321/sitemap.xml` (sitemap tùy chỉnh)
+
+# Kiểm tra robots.txt:
+- `http://localhost:4321/robots.txt`
+
+## Cập nhật robots.txt cho local:
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: http://localhost:4321/sitemap.xml
+
+# Disallow admin và API endpoints
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow các file hệ thống
+Disallow: /_astro/
+
+# Allow các trang quan trọng
+Allow: /bai-viet/
+Allow: /danh-muc/
+Allow: /gioi-thieu
+Allow: /dich-vu
+Allow: /lien-he

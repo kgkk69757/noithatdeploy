@@ -1,0 +1,31 @@
+body {
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-family: "Cormorant Garamond", serif;
+}
+
+.noidunggioithieu {
+    font-family: "Source Serif 4", serif;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+    .hero-section {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 0;
+    }
+
+    .nav-list {
+        gap: 32px;
+        font-size: 16px;
+    }
+
+    .hero-title {
+        font-size: 60px;
+    }
+}

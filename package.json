@@ -9,6 +9,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.9.3"
+    "@astrojs/node": "^9.2.2",
+    "astro": "^5.9.3",
+    "astro-seo": "^0.8.4"
+  },
+  "devDependencies": {
+    "terser": "^5.43.1"
   }
 }

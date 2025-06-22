@@ -1,0 +1,125 @@
+---
+import "../css/Header.css";
+
+//
+import { fetchSiteSettings } from "../lib/api/getSiteSettings";
+const siteSettings = await fetchSiteSettings();
+const { site_name, logo, favicon } = siteSettings;
+//
+import { fetchPhones, type Phone } from "../lib/api/phone";
+const phones: Phone[] = await fetchPhones();
+const primaryPhone = phones.length > 0 ? phones[0] : null;
+---
+
+<header>
+  <!-- Thanh top -->
+  <div class="header-top">
+    <p class="header-contact">
+      {
+        primaryPhone?.number && (
+          <span>
+            <i class="fa-solid fa-phone" />
+            {primaryPhone.number}
+          </span>
+        )
+      }
+      <span>
+        <i class="fa-solid fa-location-dot"></i> 104 Ngô Quyền, P. Tân Lợi, TP. BMT
+      </span>
+    </p>
+    <div class="header-social">
+      <i class="fa-brands fa-square-facebook"></i>
+      <i class="fa-brands fa-youtube"></i>
+      <i class="fa-brands fa-tiktok"></i>
+    </div>
+  </div>
+
+  <!-- Hero and Navigation Container -->
+  <div class="hero-nav-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <!-- Logo -->
+      <div class="logo">
+        <img src={logo.file_url} alt={logo.alt_text} />
+      </div>
+
+      <!-- Tìm kiếm -->
+      <div class="search-container">
+        <input type="search" placeholder="Tìm kiếm..." class="search-input" />
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      </div>
+
+      <!-- Hotline -->
+      {
+        primaryPhone?.number && (
+          <div class="hotline">
+            <div class="hotline-icon">
+              <i class="fa-solid fa-phone" />
+            </div>
+            <span class="hotline-text">{primaryPhone.number}</span>
+          </div>
+        )
+      }
+    </div>
+
+    <nav class="navigation">
+      <button class="mobile-menu-button" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <ul class="nav-list" id="navList">
+        <li class="nav-item">
+          <a href="/">
+            <i class="fa-solid fa-house"></i>
+            Trang chủ
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#">
+            <i class="fa-solid fa-circle-info"></i>
+            Giới thiệu
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/dich-vu">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            Dịch vụ
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/bai-viet">
+            <i class="fa-solid fa-building"></i>
+            Dự án đã hoàn thiện
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/cam-nang">
+            <i class="fa-solid fa-book"></i>
+            Cẩm nang
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#">
+            <i class="fa-solid fa-comments"></i>
+            Chia sẻ kinh nghiệm
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#">
+            <i class="fa-solid fa-video"></i>
+            Video công trình hoàn thiện
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#">
+            <i class="fa-solid fa-paper-plane"></i>
+            Gửi yêu cầu
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+  </div>
+</header>

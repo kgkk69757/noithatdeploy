@@ -1,0 +1,68 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PostList from "../components/PostList.astro";
+import PostSidebar from "../components/PostSidebar.astro";
+import "../css/bai-viet.css";
+// Fetch SEO data for this page
+let seoData = null;
+let pageTitle = "Dự án đã hoàn thiện";
+let pageDescription = "Khám phá kho tàng kiến thức về nội thất với hàng trăm bài viết hữu ích";
+
+try {
+  const response = await fetch(`${import.meta.env.PUBLIC_API_BASE}/api/pages/trangbaviet`);
+  if (response.ok) {
+    const result = await response.json();
+    if (result.success) {
+      seoData = result.data;
+      pageTitle = seoData.meta_title || pageTitle;
+      pageDescription = seoData.meta_description || pageDescription;
+    }
+  }
+} catch (error) {
+  console.error("Failed to fetch SEO data:", error);
+  // Fallback to default values
+}
+---
+
+<Layout 
+  title={seoData?.meta_title || "Dự án đã hoàn thiện"}
+  description={seoData?.meta_description || "Khám phá kho tàng kiến thức về nội thất với hàng trăm bài viết hữu ích"}
+  canonical={seoData?.canonical_url}
+  ogTitle={seoData?.og_title}
+  ogDescription={seoData?.og_description}
+  ogImage={seoData?.og_image}
+  imageAlt={seoData?.image_alt}
+  twitterCard={seoData?.twitter_card}
+  robots={seoData?.robots}
+  schemaJson={seoData?.schema_json}
+>
+  <div class="blog-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container">
+        <div class="header-content">
+          <h1 class="page-title">{pageTitle}</h1>
+          <p class="page-description">
+            {pageDescription}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div class="content-grid">
+          <div class="content-main">
+            <PostList />
+          </div>
+          <div class="content-sidebar">
+            <PostSidebar />
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</Layout>
+
+

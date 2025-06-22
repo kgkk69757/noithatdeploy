@@ -1,0 +1,25 @@
+---
+import { fetchPosts } from "../lib/api/posts";
+import PostCard from "./PostCard.astro";
+import "../css/PostList.css";
+
+const posts = await fetchPosts();
+---
+
+<div class="posts-list">
+  {
+    posts.length > 0 ? (
+      <div class="posts-grid">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="no-posts">
+        <i class="fa-solid fa-newspaper" />
+        <h3>Chưa có bài viết nào</h3>
+        <p>Hãy quay lại sau để xem những bài viết mới nhất!</p>
+      </div>
+    )
+  }
+</div>

@@ -1,0 +1,226 @@
+---
+export interface Post {
+  id: number;
+  tieudebaiviet: string;
+  slug: string;
+  img_url: string;
+  img_alt: string;
+  meta_title: string;
+  meta_description: string;
+  noidung: string;
+  danhmuc?: {
+    id: number;
+    tendanhmucbaiviet: string;
+    slug: string;
+  };
+  thes: Array<{
+    id: number;
+    tenthe: string;
+    slug: string;
+  }>;
+  created_at: string;
+  created_at_full?: string;
+  updated_at?: string;
+}
+
+interface Props {
+  post: Post;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+---
+
+<article class={`post-card ${featured ? "featured" : ""}`}>
+  <div class="post-image">
+    <img src={post.img_url} alt={post.img_alt} loading="lazy" />
+  </div>
+
+  <div class="post-content">
+    <div class="post-meta">
+      {
+        post.danhmuc && (
+          <span class="category">{post.danhmuc.tendanhmucbaiviet}</span>
+        )
+      }
+      <time class="date">{post.created_at}</time>
+    </div>
+
+    <h3 class="post-title">
+      <a href={`/bai-viet/${post.slug}`}>{post.tieudebaiviet}</a>
+    </h3>
+
+    {
+      post.meta_description && (
+        <p class="post-excerpt">{post.meta_description}</p>
+      )
+    }
+
+    <div class="post-footer">
+      {
+        post.thes && post.thes.length > 0 && (
+          <div class="post-tags">
+            {post.thes.slice(0, 2).map((tag) => (
+              <span class="tag">{tag.tenthe}</span>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      transform 0.3s,
+      box-shadow 0.3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .post-card.featured {
+    border: 2px solid #3b82f6;
+  }
+
+  .post-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .post-card:hover .post-image img {
+    transform: scale(1.05);
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #3b82f6;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .post-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .category {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .date {
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  .post-title {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .post-title a {
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .post-title a:hover {
+    color: #3b82f6;
+  }
+
+  .post-excerpt {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: auto;
+  }
+
+  .author,
+  .views {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .post-image {
+      height: 160px;
+    }
+
+    .post-content {
+      padding: 16px;
+    }
+
+    .post-title {
+      font-size: 16px;
+    }
+  }
+</style>

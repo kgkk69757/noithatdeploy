@@ -1,0 +1,77 @@
+---
+import "../css/nbtct.css";
+import {
+  fetchBannerTitleSectionA,
+  fetchStatsCards,
+  type BannerTitleSectionA,
+  type StatsCard,
+} from "../lib/api/nbtct";
+
+const bannerTitleSectionA: BannerTitleSectionA | null =
+  await fetchBannerTitleSectionA();
+const statsCards: StatsCard[] = await fetchStatsCards();
+---
+
+<section
+  class="statistics-section"
+  style={bannerTitleSectionA?.has_banner && bannerTitleSectionA.banner_url
+    ? `background-image: url('${bannerTitleSectionA.banner_url}')`
+    : "background-image: url('../images/image-11.png')"}
+>
+  {
+    bannerTitleSectionA?.has_banner && bannerTitleSectionA.banner_url && (
+      <div class="background-image-overlay">
+        <img
+          src={bannerTitleSectionA.banner_url}
+          alt={bannerTitleSectionA.banner_alt}
+          class="hidden-bg-img"
+        />
+      </div>
+    )
+  }
+
+  <div class="stats-container">
+    <div class="stats-section-header stats-text-center">
+      {
+        bannerTitleSectionA?.has_title && bannerTitleSectionA.title ? (
+          <h2 class="stats-section-title">{bannerTitleSectionA.title}</h2>
+        ) : null
+      }
+
+      {
+        bannerTitleSectionA?.has_mota && bannerTitleSectionA.mota ? (
+          <p class="stats-section-description">{bannerTitleSectionA.mota}</p>
+        ) : null
+      }
+    </div>
+    <div class="stats-vien2ben">
+      <div class="stats-grid">
+        {
+          statsCards.map((card) => (
+            <div class="stat-card">
+              <div
+                class="stat-number"
+                style={`color: ${card.color}`}
+                data-number={card.number}
+                data-type={card.number === "0" ? "text" : "number"}
+              >
+                {/* Logic hiển thị: nếu number = "0" thì lấy title, nếu title khác "Chưa có tiêu đề" thì lấy title, còn lại lấy number */}
+                {card.number === "0"
+                  ? card.title && card.title !== "Chưa có tiêu đề"
+                    ? card.title
+                    : ""
+                  : card.title && card.title !== "Chưa có tiêu đề"
+                    ? card.title
+                    : card.number
+                      ? card.number
+                      : ""}
+              </div>
+              <p class="stat-description">{card.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+<script src="/js/nbtct.js" defer></script>

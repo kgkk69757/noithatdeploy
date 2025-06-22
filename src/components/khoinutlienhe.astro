@@ -1,0 +1,58 @@
+---
+import "../css/khoinutlienhe.css";
+
+import { fetchPhones, type Phone } from "../lib/api/phone";
+
+const phones: Phone[] = await fetchPhones();
+const primaryPhone = phones.length > 0 ? phones[0] : null;
+---
+
+<!-- Floating contact buttons -->
+<div class="floating-contact">
+  <!-- Nút Báo giá -->
+  <a href="#bao-gia" class="contact-button">
+    <div class="contact-button-inner">
+      <i class="fa-solid fa-file-invoice-dollar"></i>
+      <span>Báo giá</span>
+    </div>
+  </a>
+
+  <!-- Nút Zalo -->
+  {
+    primaryPhone?.number && (
+      <a
+        href={`https://zalo.me/${primaryPhone.number}`}
+        target="_blank"
+        class="contact-button"
+      >
+        <div class="contact-button-inner">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"
+            alt="Icon Zalo"
+          />
+          <span>Chat Zalo</span>
+        </div>
+      </a>
+    )
+  }
+
+  <!-- Nút Gọi điện -->
+  {
+    primaryPhone?.number && (
+      <a href={`tel:${primaryPhone.number}`} class="contact-button">
+        <div class="contact-button-inner">
+          <i class="fa-solid fa-phone" />
+          <span>Gọi điện</span>
+        </div>
+      </a>
+    )
+  }
+
+  <!-- Nút Messenger -->
+  <a href="https://m.me/yourpage" target="_blank" class="contact-button">
+    <div class="contact-button-inner">
+      <i class="fa-brands fa-facebook-messenger"></i>
+      <span>Messenger</span>
+    </div>
+  </a>
+</div>

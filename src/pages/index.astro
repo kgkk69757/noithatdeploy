@@ -1,11 +1,80 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import "../css/banner.css";
+import Banner from "../components/Banner.astro";
+import Gioithieu from "../components/gioithieu.astro";
+import Duannoithat from "../components/duannoithat.astro";
+import Sanphamvadanhmuc from "../components/sanphamvadanhmuc.astro";
+import A13nam from "../components/a13nam.astro";
+import Tttt from "../components/tttt.astro";
+import Hesinhthai from "../components/hesinhthai.astro";
+import Doitac from "../components/doitac.astro";
+import Nbtct from "../components/nbtct.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Import banner API để lấy dữ liệu cho SEO
+import { fetchBanners } from "../lib/api/banner";
+const banners = await fetchBanners();
+
+// Enhanced SEO Props cho trang chủ
+const homePageSEO = {
+  title: "Thiết Kế Nội Thất Cao Cấp - Trang Chủ | Công Ty Nội Thất",
+  description: "Chuyên thiết kế và thi công nội thất cao cấp với 13 năm kinh nghiệm. Tư vấn miễn phí, báo giá nhanh chóng. Đội ngũ kiến trúc sư chuyên nghiệp.",
+  keywords: "thiết kế nội thất, nội thất cao cấp, thi công nội thất, tư vấn nội thất, kiến trúc sư, nội thất hiện đại",
+  canonical: Astro.url.href,
+  ogTitle: "Thiết Kế Nội Thất Cao Cấp - Giải Pháp Hoàn Hảo Cho Ngôi Nhà",
+  ogDescription: "Khám phá dịch vụ thiết kế nội thất chuyên nghiệp với đội ngũ kiến trúc sư giàu kinh nghiệm. Tạo không gian sống hoàn hảo cho gia đình bạn.",
+  ogImage: banners[0]?.image_url || "/images/og-homepage.jpg",
+  imageAlt: "Thiết kế nội thất cao cấp - Trang chủ",
+  robots: "index, follow",
+  author: "Công Ty Nội Thất",
+  schemaJson: JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Công Ty Nội Thất",
+    "url": Astro.url.origin,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${Astro.url.origin}/images/logo.png`,
+      "width": 200,
+      "height": 60
+    },
+    "description": "Chuyên thiết kế và thi công nội thất cao cấp với 13 năm kinh nghiệm",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "VN",
+      "addressLocality": "Hồ Chí Minh"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+84-xxx-xxx-xxx",
+      "contactType": "customer service"
+    },
+    "sameAs": [
+      "https://facebook.com/yourpage",
+      "https://instagram.com/yourpage"
+    ],
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${Astro.url.origin}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  })
+};
 ---
 
-<Layout>
-	<Welcome />
+<Layout {...homePageSEO}> 
+  <!-- Phần cần lazy load -->
+  <div id="lazy-content">
+    <Banner />
+    <Gioithieu />
+    <Duannoithat />
+    <Sanphamvadanhmuc />
+    <Nbtct />
+    <A13nam />
+    <Tttt />
+    <Hesinhthai />
+    <Doitac />
+  </div>
+  <script src="/js/index.js" defer></script>
 </Layout>
+
