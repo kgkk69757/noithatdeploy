@@ -1,14 +1,12 @@
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'http://localhost:4321',
-  output: 'server',
-  adapter: node({
-    mode: 'standalone'
-  }),
   integrations: [],
+
   vite: {
     build: {
       cssMinify: true,
@@ -25,8 +23,12 @@ export default defineConfig({
       noExternal: ['swiper']
     }
   },
+
   compressHTML: true,
+
   build: {
     inlineStylesheets: 'auto'
-  }
+  },
+
+  adapter: vercel()
 });
