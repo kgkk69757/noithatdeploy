@@ -4,9 +4,9 @@ import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'http://localhost:4321',
+  site: 'https://noithatdeploy.vercel.app',
   integrations: [],
-
+  
   vite: {
     build: {
       cssMinify: true,
