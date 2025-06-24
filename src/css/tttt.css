@@ -164,10 +164,6 @@ body {
     cursor: pointer;
 }
 
-.tiktok-item:hover {
-    /* transform: translateY(-6px); */
-    /* box-shadow: 0 12px 35px rgba(255, 0, 80, 0.25); */
-}
 
 .tiktok-embed {
     border-radius: clamp(12px, 3vw, 16px);

@@ -1,32 +1,27 @@
 ---
 import "../../css/bgdich-vu.css";
+import { fetchTrangCamNang } from "../../lib/api/cam-nang";
+import type { TrangCamNang } from "../../types/cam-nang";
 
-// Interface cho dữ liệu banner
-interface BannerData {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
+// Lấy dữ liệu từ API
+const trangCamNang: TrangCamNang = await fetchTrangCamNang();
 
-// Gom dữ liệu thành một object duy nhất
-const mockData: BannerData = {
-  imageUrl:
-    "https://rcong.vn/home/wp-content/uploads/2024/12/Hoang-My-rcong-1.jpg",
-  title:
-    "101+ Mẫu thiết kế nội thất đẹp cao cấp - báo giá dịch vụ thiết kế nội thất 2025",
-  description:
-    "Để sở hữu không gian sống lý tưởng, thẩm mỹ nhưng vẫn đảm bảo công năng. Hãy tham khảo ngay các mẫu thiết kế nội thất đẹp lý tưởng mà Mạnh Hệ thực hiện, cùng những thông tin chi tiết về báo giá, quy trình và lưu ý cần biết khi thiết kế để chọn đơn vị phù hợp cho nhà mình!",
+const bannerData = {
+  imageUrl: trangCamNang.anh_url,
+  title: trangCamNang.tieude,
+  description: trangCamNang.mota,
 };
 ---
 
 <section>
   <div
     class="banner-container"
-    style={`background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${mockData.imageUrl}');`}
+    style={`background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${bannerData.imageUrl}');`}
   >
     <div class="banner-content">
-      <h1>{mockData.title}</h1>
-      <p>{mockData.description}</p>
+      <h1>{bannerData.title}</h1>
+      <p>{bannerData.description}</p>
     </div>
   </div>
 </section>
+

@@ -1,55 +1,13 @@
-interface CamNang {
-  id: string;
-  title: string;
-  content: string;
-  thumbnail: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { TrangCamNang } from "../../types/cam-nang";
 
-const fetchAPI = async (url: string, options?: RequestInit) => {
-  const response = await fetch(url, options);
+// Lấy thông tin trang cẩm nang
+export async function fetchTrangCamNang(): Promise<TrangCamNang> {
+  const response = await fetch(`${import.meta.env.PUBLIC_API_BASE}/trangcamnang`);
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error("Failed to fetch");
   }
-  return await response.json();
-};
 
-export const getDanhSachCamNang = async (): Promise<CamNang[]> => {
-  return await fetchAPI("/cam-nang");
-};
-
-export const getCamNangChiTiet = async (id: string): Promise<CamNang> => {
-  return await fetchAPI(`/cam-nang/${id}`);
-};
-
-export const taoCamNang = async (
-  data: Omit<CamNang, "id" | "createdAt" | "updatedAt">
-): Promise<CamNang> => {
-  return await fetchAPI("/cam-nang", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-};
-
-export const capNhatCamNang = async (
-  id: string,
-  data: Partial<CamNang>
-): Promise<CamNang> => {
-  return await fetchAPI(`/cam-nang/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-};
-
-export const xoaCamNang = async (id: string): Promise<void> => {
-  await fetchAPI(`/cam-nang/${id}`, {
-    method: "DELETE",
-  });
-};
+  const data = await response.json();
+  return data.data as TrangCamNang;
+}
